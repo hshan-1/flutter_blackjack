@@ -32,28 +32,38 @@ void play() {
     playerCards.addAll(_dealNumberOfCards(1));
   }
 
+  void double(){
+    playerCards.addAll(_dealNumberOfCards(1));
+    playersTurn = 0;
+  }
+
   void stop(){
     playersTurn = 0;
     croupierRevealed = true;
-    if(handValue(croupierCards) < 16){
+    if(handValue(croupierCards) <= 16){
       croupierCards.addAll(_dealNumberOfCards(1));
     }
   }
 
-  List<GameCard> _dealNumberOfCards(int amount){
-    List<GameCard> stack =[];
-    for(GameCard card in deck.card){
-      //daj do łapy
-      stack.add(card);
-      //usuń z talii 
-      deck.card.remove(card);
-      amount--;
-      if(amount == 0){
-        break;
-      }     
-    }
-    return stack;
+  List<GameCard> _dealNumberOfCards(int amount) {
+  List<GameCard> stack = [];
+  List<GameCard> cardsToRemove = [];
+  
+  for (GameCard card in deck.card) {
+    if (amount == 0) break;
+    stack.add(card);
+    cardsToRemove.add(card);  // Zbieramy karty do usunięcia
+    amount--;
   }
+
+  // Usuwamy karty po zakończeniu iteracji
+  for (var card in cardsToRemove) {
+    deck.card.remove(card);
+  }
+
+  return stack;
+}
+
 
   void checkGameResult() {
     switch(playersTurn){

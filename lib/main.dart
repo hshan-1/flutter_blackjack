@@ -52,18 +52,37 @@ class _MyHomePageState extends State<MyHomePage> {
     game.playersTurn = 1;
     gameStarted = true;
     croupierTurn = false;
+    if(game.handValue(playerHand) == 21){
+      gameStarted = false;
+      _money += _currentBet + (_currentBet*1.5);
+      _currentBet = 0;
+      gameResultMessage = "BlackJack You win!";
+    }
+  }
+
+  _double(){
+    game.double();
+    setState(() {
+      _money -= _currentBet;
+      _currentBet += _currentBet;
+      game.checkGameResult();
+      playerHand = game.playerCards;
+      game.checkGameResult();
+    });
+    
+    if(game.handValue(playerHand) > 21){
+      gameStarted = false;
+      _currentBet = 0;
+      gameResultMessage = "Bust";
+    } else{
+      _stop();
+    }
   }
 
   void _hit() {
     game.checkGameResult();
     
     game.hit();
-    if(game.resultofGame == ResultofGame.blackjack){
-      gameStarted = false;
-      _money += _currentBet *(_currentBet/2);
-      _currentBet = 0;
-      gameResultMessage = "BlackJack You win!";
-    }
     if(game.handValue(playerHand) > 21){
       gameStarted = false;
       _currentBet = 0;
@@ -141,7 +160,7 @@ void _stop() {
         _money -= betAmount;
         _currentBet = betAmount;
       });
-      
+      _betController.clear();
       takeAwayCards();
       startGame(); 
     }
@@ -214,7 +233,7 @@ Row(
           ),
         ),
       );
-    }).toList(),
+    }),
   ],
 ),
 const SizedBox(height: 20),
@@ -246,6 +265,17 @@ const SizedBox(height: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    ElevatedButton(
+                      onPressed: gameStarted && game.playersTurn  == 1 && playerHand.length <=2 ? _double : null,
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        backgroundColor: gameStarted && playerHand.length<=2 ? Colors.yellow : Colors.grey,
+                        padding: EdgeInsets.all(20),
+                        
+                      ),
+                      child: const Text('Double'),
+                    ),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: gameStarted && game.playersTurn == 1 ? _hit : null,
                       style: ElevatedButton.styleFrom(
