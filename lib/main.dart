@@ -216,7 +216,6 @@ Row(
       int index = entry.key;
       GameCard card = entry.value;
 
-      // Zakryj pierwszą kartę tylko wtedy, gdy gra się toczy, ale tura krupiera jeszcze nie zaczęła
       bool isCovered = index == 0 && !croupierTurn;
 
       return Container(
