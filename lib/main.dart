@@ -127,12 +127,12 @@ void _stop() {
         
         croupierHand = List.from(game.croupierCards); 
         
-        if (game.resultofGame == ResultofGame.loss) {
+        if (game.resultOfGame == ResultofGame.loss) {
           gameResultMessage = "You lost";
-        } else if (game.resultofGame == ResultofGame.win) {
+        } else if (game.resultOfGame == ResultofGame.win) {
           _money += _currentBet * 2;
           gameResultMessage = "You won!";
-        } else if (game.resultofGame == ResultofGame.push) {
+        } else if (game.resultOfGame == ResultofGame.push) {
           _money += _currentBet;
           gameResultMessage = "Push.";
         }

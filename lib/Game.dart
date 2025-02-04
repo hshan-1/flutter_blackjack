@@ -11,7 +11,7 @@ class Game {
   List<GameCard> croupierCards = [];
   late String gameResultMessage;
   int playersTurn = 1;
-  ResultofGame? resultofGame;
+  ResultofGame? resultOfGame;
 
   Deck getDeck(){return deck;}
 
@@ -85,12 +85,12 @@ void play() {
   String _playerResult() {
     int playerHandValue = handValue(playerCards);
     if(playerHandValue == 21 && playerCards.length ==2){
-      resultofGame = ResultofGame.blackjack;
+      resultOfGame = ResultofGame.blackjack;
       return "Blackjack!";
     }if (playerHandValue <=21){
       return "";
     } else{
-      resultofGame = ResultofGame.loss;
+      resultOfGame = ResultofGame.loss;
       return "Bust...";
     }
   }
@@ -100,17 +100,17 @@ void play() {
   int playerHandValue = handValue(playerCards);
 
   if (croupierHandValue == 21 && croupierCards.length == 2) {
-    resultofGame = ResultofGame.loss;
+    resultOfGame = ResultofGame.loss;
   } else if (croupierHandValue <= 21) {
     if (croupierHandValue > playerHandValue) {
-      resultofGame = ResultofGame.loss;
+      resultOfGame = ResultofGame.loss;
     } else if (croupierHandValue < playerHandValue) {
-      resultofGame = ResultofGame.win;
+      resultOfGame = ResultofGame.win;
     } else {
-      resultofGame = ResultofGame.push;
+      resultOfGame = ResultofGame.push;
     }
   } else {
-    resultofGame = ResultofGame.win;
+    resultOfGame = ResultofGame.win;
   }
 }
 
