@@ -15,6 +15,15 @@ class Game {
 
   Deck getDeck(){return deck;}
 
+canSplit(){
+  var card1 = playerCards[0];
+  var card2 = playerCards[1];
+  if(card1.getPoints() == card2.getPoints()){
+    return true;
+  }
+    return false;
+  }
+
 void play() {
 
     if(deck.card.length >= 208 || deck.card.length <=100){
@@ -40,9 +49,7 @@ void play() {
   void stop(){
     playersTurn = 0;
     croupierRevealed = true;
-    if(handValue(croupierCards) <= 16){
       croupierCards.addAll(_dealNumberOfCards(1));
-    }
   }
 
   List<GameCard> _dealNumberOfCards(int amount) {
@@ -96,44 +103,44 @@ void play() {
   }
   
   void _dealerResults() {
-  int croupierHandValue = handValue(croupierCards);
-  int playerHandValue = handValue(playerCards);
+    int croupierHandValue = handValue(croupierCards);
+    int playerHandValue = handValue(playerCards);
 
-  if (croupierHandValue == 21 && croupierCards.length == 2) {
-    resultOfGame = ResultofGame.loss;
-  } else if (croupierHandValue <= 21) {
-    if (croupierHandValue > playerHandValue) {
+    if (croupierHandValue == 21 && croupierCards.length == 2) {
       resultOfGame = ResultofGame.loss;
-    } else if (croupierHandValue < playerHandValue) {
-      resultOfGame = ResultofGame.win;
+    } else if (croupierHandValue <= 21) {
+      if (croupierHandValue > playerHandValue) {
+        resultOfGame = ResultofGame.loss;
+      } else if (croupierHandValue < playerHandValue) {
+        resultOfGame = ResultofGame.win;
+      } else {
+        resultOfGame = ResultofGame.push;
+      }
     } else {
-      resultOfGame = ResultofGame.push;
+      resultOfGame = ResultofGame.win;
     }
-  } else {
-    resultOfGame = ResultofGame.win;
   }
-}
 
 
   int handValue(List<GameCard> cards) {
-  int handValue = 0;
-  int aceCount = 0;
+    int handValue = 0;
+    int aceCount = 0;
 
-  for (GameCard card in cards) {
-    if (card.getValue() == "A") {
-      aceCount++; 
-      handValue += 11; 
-    } else {
-      handValue += card.getPoints();
+    for (GameCard card in cards) {
+      if (card.getValue() == "A") {
+        aceCount++; 
+        handValue += 11; 
+      } else {
+        handValue += card.getPoints();
+      }
     }
-  }
-  while (handValue > 21 && aceCount > 0) {
-    handValue -= 10; 
-    aceCount--;
-  }
+    while (handValue > 21 && aceCount > 0) {
+      handValue -= 10; 
+      aceCount--;
+    }
 
-  return handValue;
-}
+    return handValue;
+  }
 }
 
 enum ResultofGame{

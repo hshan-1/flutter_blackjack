@@ -60,22 +60,35 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  _split(){
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('not implemented yet 🤯')),
+      );
+     _hit();
+  }
+
   _double(){
-    game.double();
-    setState(() {
-      _money -= _currentBet;
-      _currentBet += _currentBet;
-      game.checkGameResult();
-      playerHand = game.playerCards;
-      game.checkGameResult();
-    });
-    
-    if(game.handValue(playerHand) > 21){
-      gameStarted = false;
-      _currentBet = 0;
-      gameResultMessage = "Bust";
+    if(_money >= _currentBet){
+      game.double();
+      setState(() {
+        _money -= _currentBet;
+        _currentBet += _currentBet;
+        game.checkGameResult();
+        playerHand = game.playerCards;
+        game.checkGameResult();
+      });
+      
+      if(game.handValue(playerHand) > 21){
+        gameStarted = false;
+        _currentBet = 0;
+        gameResultMessage = "Bust";
+      } else{
+        _stop();
+      }
     } else{
-      _stop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Not enough money to double down')),
+      );
     }
   }
 
@@ -113,19 +126,19 @@ void _stop() {
     croupierTurn = true;
   });
 
-  Future.delayed(Duration(milliseconds: 700), () {
-    game.stop();
-
-    setState(() {
-      croupierHand = List.from(game.croupierCards); 
-      game.croupierRevealed = true; 
+  if (game.handValue(croupierHand) <= 16) {
+    Future.delayed(Duration(milliseconds: 700), () {
+      game.stop();
+      setState(() {
+        croupierHand = List.from(game.croupierCards);
+      });
+      _stop(); 
     });
-
+  } else {
+    game.checkGameResult();
     Future.delayed(Duration(milliseconds: 100), () {
       setState(() {
-        game.checkGameResult();
-        
-        croupierHand = List.from(game.croupierCards); 
+        game.croupierRevealed = true;
         
         if (game.resultOfGame == ResultofGame.loss) {
           gameResultMessage = "You lost";
@@ -141,8 +154,9 @@ void _stop() {
         gameStarted = false;
       });
     });
-  });
+  }
 }
+
 
 
   void _bet() {
@@ -194,7 +208,7 @@ void _stop() {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(64.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,6 +270,19 @@ const SizedBox(height: 20),
                     ),
                   )
                   .toList(),
+            ),
+            const SizedBox(height: 20),
+            if(game.canSplit() && playerHand.length <=2)
+            ElevatedButton(
+              onPressed: () {
+                _split;
+              },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                backgroundColor: Colors.lightBlueAccent, 
+                padding: EdgeInsets.all(20),
+              ),
+              child: const Text('Split'),
             ),
             const SizedBox(height: 20),
             Row(
