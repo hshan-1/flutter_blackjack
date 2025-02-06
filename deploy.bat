@@ -1,18 +1,11 @@
-@echo off
-cd /d "%~dp0"
-
-echo Building app...
-flutter build web || exit /b
-
-echo Copying new build...
+echo Copy files
 xcopy /E /I /Y "build\web\*" "..\proj_njp\web" >nul
 
-cd /d "..\proj_njp\web" || exit /b
+cd /d "..\proj_njp\web" 
 
 echo Pushing changes...
-git add . 
+git add .
 git commit -m "application new build"
-git push
+git push --force
 
 echo Done.
-pause

@@ -252,7 +252,7 @@ bool _isValidBet(String bet) {
                 ),
                 if(_creditMoney > 0)
                 Text(
-                  '        Credit: -$_creditMoney\$',
+                  '        Credit: -$_creditMoney\$  ',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Row(
@@ -263,7 +263,7 @@ bool _isValidBet(String bet) {
                   _repay();
                 },
                 style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
+                  shape: StadiumBorder(),
                   backgroundColor: const Color.fromARGB(255, 0, 255, 76), 
                   padding: EdgeInsets.all(20),
                 ),
