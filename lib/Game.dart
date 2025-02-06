@@ -73,36 +73,6 @@ void play() {
 
 
   void checkGameResult() {
-    switch(playersTurn){
-      case 1:
-        _playerResult();
-      case 0:
-        _dealerResults();
-    }
-  }
-
-  int calculateHandValue(List<GameCard> cards) {
-    int value = 0;
-    for (var card in cards) {
-      value += card.getPoints();
-    }
-    return value;
-  }
-  
-  String _playerResult() {
-    int playerHandValue = handValue(playerCards);
-    if(playerHandValue == 21 && playerCards.length ==2){
-      resultOfGame = ResultofGame.blackjack;
-      return "Blackjack!";
-    }if (playerHandValue <=21){
-      return "";
-    } else{
-      resultOfGame = ResultofGame.loss;
-      return "Bust...";
-    }
-  }
-  
-  void _dealerResults() {
     int croupierHandValue = handValue(croupierCards);
     int playerHandValue = handValue(playerCards);
 
@@ -120,8 +90,7 @@ void play() {
       resultOfGame = ResultofGame.win;
     }
   }
-
-
+  
   int handValue(List<GameCard> cards) {
     int handValue = 0;
     int aceCount = 0;
@@ -141,6 +110,15 @@ void play() {
 
     return handValue;
   }
+
+  int calculateHandValue(List<GameCard> cards) {
+    int value = 0;
+    for (var card in cards) {
+      value += card.getPoints();
+    }
+    return value;
+  }
+
 }
 
 enum ResultofGame{

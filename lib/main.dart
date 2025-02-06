@@ -35,6 +35,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _betController = TextEditingController();
   double _money = 1000;
+  double _creditMoney = 0;
   double _currentBet = 0;
   Game game = Game();
   List<GameCard> playerHand = [];
@@ -53,12 +54,40 @@ class _MyHomePageState extends State<MyHomePage> {
     gameStarted = true;
     croupierTurn = false;
     if(game.handValue(playerHand) == 21){
-      gameStarted = false;
-      _money += _currentBet + (_currentBet*1.5);
-      _currentBet = 0;
-      gameResultMessage = "BlackJack You win!";
+      if(game.handValue(croupierHand) != 21){
+        gameStarted = false;
+        _money += _currentBet + (_currentBet*1.5);
+        _currentBet = 0;
+        gameResultMessage = "BlackJack You win!";
+      }
+      if(game.handValue(croupierHand) == 21){
+        gameStarted = false;
+        _money += _currentBet;
+        _currentBet = 0;
+        gameResultMessage = "Push";
+      }
     }
   }
+
+  _borrow(){
+    setState(() {
+      _money+=1000;
+      _creditMoney+=1000;
+    });
+  }
+
+  void _repay() {
+  if (_money >= _creditMoney) {
+    setState(() {
+      _money -= _creditMoney;
+      _creditMoney = 0;
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('You cannot repay your debt')),
+    );
+  }
+}
 
   _split(){
     ScaffoldMessenger.of(context).showSnackBar(
@@ -136,10 +165,10 @@ void _stop() {
     });
   } else {
     game.checkGameResult();
-    Future.delayed(Duration(milliseconds: 100), () {
       setState(() {
         game.croupierRevealed = true;
-        
+
+        croupierHand = List.from(game.croupierCards);
         if (game.resultOfGame == ResultofGame.loss) {
           gameResultMessage = "You lost";
         } else if (game.resultOfGame == ResultofGame.win) {
@@ -153,32 +182,33 @@ void _stop() {
         _currentBet = 0;
         gameStarted = false;
       });
-    });
   }
 }
 
 
 
   void _bet() {
-    final betAmount = double.tryParse(_betController.text);
-    if (betAmount == null || betAmount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid bet amount.')),
-      );
-    } else if (betAmount > _money) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You do not have enough money for this bet.')),
-      );
-    } else {
-      setState(() {
-        _money -= betAmount;
-        _currentBet = betAmount;
-      });
-      _betController.clear();
-      takeAwayCards();
-      startGame(); 
-    }
+  final betAmount = double.tryParse(_betController.text);
+  if (betAmount == null || betAmount <= 0 || !_isValidBet(_betController.text)) {
+    _betController.clear();
+  } else if (betAmount > _money) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('You do not have enough money for this bet.')),
+    );
+  } else {
+    setState(() {
+      _money -= betAmount;
+      _currentBet = betAmount;
+    });
+    takeAwayCards();
+    startGame();
   }
+}
+
+bool _isValidBet(String bet) {
+  final regex = RegExp(r'^\d+(\.\d{1,2})?$'); 
+  return regex.hasMatch(bet);
+}
 
 
   String getSuitString(CardColors color) {
@@ -217,10 +247,46 @@ void _stop() {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Money: $_money\$',
+                  'Money: ${_money.toStringAsFixed(2)}\$',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+                if(_creditMoney > 0)
+                Text(
+                  '        Credit: -$_creditMoney\$',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Row(
+              children: [
+                if(_creditMoney > 0)
+                ElevatedButton(
+                onPressed: () {
+                  _repay();
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  backgroundColor: const Color.fromARGB(255, 0, 255, 76), 
+                  padding: EdgeInsets.all(20),
+                ),
+                child: const Text('Repay'),
+              ),]
+            ),
               ],
+            ),
+            
+            if(_money == 0 && !gameStarted)
+            Row(
+              children: [
+                ElevatedButton(
+                onPressed: () {
+                  _borrow();
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  backgroundColor: const Color.fromRGBO(9, 255, 0, 1), 
+                  padding: EdgeInsets.all(20),
+                ),
+                child: const Text('Borrow'),
+              ),]
             ),
             const SizedBox(height: 20),
 Row(
@@ -272,7 +338,8 @@ const SizedBox(height: 20),
                   .toList(),
             ),
             const SizedBox(height: 20),
-            if(game.canSplit() && playerHand.length <=2)
+            // if(playerHand.isNotEmpty && game.canSplit() && playerHand.length <=2)
+            if(false)//TODO: do it some other time idc
             ElevatedButton(
               onPressed: () {
                 _split;
