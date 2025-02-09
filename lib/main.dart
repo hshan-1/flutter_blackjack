@@ -13,12 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Blackjack',
+      title: 'BlackJack',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 255, 255)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Blackjack'),
+      home: const MyHomePage(title: 'BlackJack'),
     );
   }
 }
@@ -183,9 +183,10 @@ void _stop() {
         gameStarted = false;
       });
   }
-}
+} 
+  void _insurance() {
 
-
+  }
 
   void _bet() {
   final betAmount = double.tryParse(_betController.text);
@@ -232,13 +233,15 @@ bool _isValidBet(String bet) {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(     
+      backgroundColor: Color.fromRGBO(255, 255, 102, 0.5), 
       appBar: AppBar(
         title: const Text('Blackjack'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Color.fromRGBO(0, 255, 100, 1), 
       ),
       body: Padding(
         padding: const EdgeInsets.all(64.0),
+        
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -264,7 +267,7 @@ bool _isValidBet(String bet) {
                 },
                 style: ElevatedButton.styleFrom(
                   shape: StadiumBorder(),
-                  backgroundColor: const Color.fromARGB(255, 0, 255, 76), 
+                  backgroundColor: const Color.fromARGB(255, 0, 255, 0), 
                   padding: EdgeInsets.all(20),
                 ),
                 child: const Text('Repay'),
@@ -350,6 +353,18 @@ const SizedBox(height: 20),
                 padding: EdgeInsets.all(20),
               ),
               child: const Text('Split'),
+            ),
+            if(croupierHand.isNotEmpty && croupierHand[1].getValue()=='A' && game.playersTurn == 1)
+             ElevatedButton(
+              onPressed: () {
+                _insurance();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: StadiumBorder(),
+                backgroundColor: Colors.lightBlueAccent, 
+                padding: EdgeInsets.all(20),
+              ),
+              child: const Text('Insurance'),
             ),
             const SizedBox(height: 20),
             Row(
