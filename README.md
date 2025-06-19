@@ -1,6 +1,6 @@
 # blackjack
 
-_new_ Flutter project. For my lovely university.
+~~new~~ Flutter project. For my lovely university.
 
 ## Getting Started
 
