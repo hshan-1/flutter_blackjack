@@ -1,8 +1,6 @@
-# flutter_blackjack
-=======
 # blackjack
 
-A new Flutter project.
+_new_ Flutter project. For my lovely university.
 
 ## Getting Started
 
